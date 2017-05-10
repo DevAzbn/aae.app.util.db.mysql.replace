@@ -61,9 +61,11 @@ azbn.mdl('db/mysql', db_conf).connect(function(err){
 							
 							(function(table_name){
 								
+								/*
 								result.tables[table_name] = {
 									fields : {},
 								};
+								*/
 								
 								async_arr.push(function(callback){
 									
@@ -77,7 +79,7 @@ azbn.mdl('db/mysql', db_conf).connect(function(err){
 											
 										} else if(_rows.length > 0) {
 											
-											var sql_str = [];
+											var sql_arr = [];
 											
 											for(var _i = 0; _i < _rows.length; _i++) {
 												
@@ -94,15 +96,20 @@ azbn.mdl('db/mysql', db_conf).connect(function(err){
 												
 												//UPDATE wp_posts SET post_content = REPLACE (post_content, 'http://wp.azbn.ru/', 'http://localhost/');
 												
-												sql_str.push(res.Field + " = REPLACE(" + res.Field + ", '" + argv.from + "', '" + argv.to + "') ");
+												sql_arr.push(res.Field + " = REPLACE(" + res.Field + ", '" + argv.from + "', '" + argv.to + "') ");
 												
 											}
 											
-											azbn.mdl('db/mysql').query('UPDATE `' + wp_posts + '` SET ' . sql_str.join(), function(__query_err, __rows, __fields) {
+											
+											azbn.mdl('db/mysql').query('UPDATE `' + table_name + '` SET ' + sql_arr.join(', '), function(__query_err, __rows, __fields) {
 												
 												callback(__query_err, null);
 												
 											});
+											
+										} else {
+											
+											callback(null, null);
 											
 										}
 										
